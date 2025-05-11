@@ -52,7 +52,7 @@ const CodeExample = ({
             <AccordionContent>
               <div className="text-sm py-2 px-1">
                 {explanation.split('\n').map((line, i) => (
-                  <p key={i} className={cn("mb-2", line.startsWith('-') && "pl-4"))}>{line}</p>
+                  <p key={i} className={cn("mb-2", line.startsWith('-') && "pl-4")}>{line}</p>
                 ))}
               </div>
             </AccordionContent>
