@@ -1,11 +1,18 @@
-
 import { useParams } from "react-router-dom";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import VideoEmbed from "../components/common/VideoEmbed";
 import DownloadButton from "../components/common/DownloadButton";
+import CodeExample from "../components/common/CodeExample";
 import { useState } from "react";
 import { ArrowRight, CheckCircle, FileText, Youtube } from "lucide-react";
+
+interface CodeExampleType {
+  title: string;
+  code: string;
+  language: string;
+  explanation: string;
+}
 
 interface CourseContent {
   id: string;
@@ -17,6 +24,7 @@ interface CourseContent {
     fileUrl: string;
     fileType: "pdf" | "code" | "notes" | "cheatsheet";
   }[];
+  codeExamples?: CodeExampleType[];
 }
 
 interface Course {
@@ -54,6 +62,20 @@ const CoursePage = () => {
               label: "First Program Notes",
               fileUrl: "#",
               fileType: "notes"
+            }
+          ],
+          codeExamples: [
+            {
+              title: "Hello World in Python",
+              code: "# Your first Python program\nprint('Hello, World!')",
+              language: "python",
+              explanation: "This is a simple Python program that prints 'Hello, World!' to the console.\n- print() is a built-in function that displays output\n- Text strings in Python are enclosed in single or double quotes"
+            },
+            {
+              title: "Variables in Python",
+              code: "# Defining variables\nname = 'Alice'\nage = 25\npi = 3.14159\n\n# Using variables\nprint(f'My name is {name} and I am {age} years old.')",
+              language: "python",
+              explanation: "This example shows how to create and use variables in Python:\n- Variables are created by assigning a value with =\n- Python automatically determines the data type\n- f-strings (formatted string literals) allow you to embed expressions inside string literals using {}"
             }
           ]
         },
@@ -107,6 +129,20 @@ const CoursePage = () => {
               fileUrl: "#",
               fileType: "pdf"
             }
+          ],
+          codeExamples: [
+            {
+              title: "Hello World in JavaScript",
+              code: "// Your first JavaScript code\nconsole.log('Hello, World!');\n\n// Displaying in the browser\ndocument.getElementById('output').textContent = 'Hello, World!';",
+              language: "javascript",
+              explanation: "This shows two ways to output text in JavaScript:\n- console.log() outputs text to the browser console (for debugging)\n- The second line finds an HTML element and changes its content"
+            },
+            {
+              title: "Variables in JavaScript",
+              code: "// Modern JavaScript variable declaration\nconst name = 'Alice';\nlet age = 25;\n\n// Using template literals\nconsole.log(`My name is ${name} and I am ${age} years old.`);\n\n// Variables can be reassigned (only with let)\nage = 26;\nconsole.log(`Now I am ${age} years old.`);",
+              language: "javascript",
+              explanation: "This example demonstrates variable usage in JavaScript:\n- const creates variables that cannot be reassigned\n- let creates variables that can be reassigned\n- Template literals use backticks (`) and ${} for embedding variables"
+            }
           ]
         },
         {
@@ -140,6 +176,14 @@ const CoursePage = () => {
               label: "HTML Tags Reference",
               fileUrl: "#",
               fileType: "pdf"
+            }
+          ],
+          codeExamples: [
+            {
+              title: "Basic HTML Document Structure",
+              code: "<!DOCTYPE html>\n<html lang=\"en\">\n<head>\n  <meta charset=\"UTF-8\">\n  <meta name=\"viewport\" content=\"width=device-width, initial-scale=1.0\">\n  <title>My First Webpage</title>\n</head>\n<body>\n  <h1>Hello, World!</h1>\n  <p>This is my first webpage.</p>\n</body>\n</html>",
+              language: "html",
+              explanation: "This shows the essential structure of an HTML document:\n- <!DOCTYPE html> declares the document type\n- <html> is the root element\n- <head> contains meta information and links to external resources\n- <body> contains the visible content of the page"
             }
           ]
         },
@@ -175,6 +219,20 @@ const CoursePage = () => {
               fileUrl: "#",
               fileType: "pdf"
             }
+          ],
+          codeExamples: [
+            {
+              title: "Initialize a Git Repository",
+              code: "# Create a new repository\ngit init\n\n# Check repository status\ngit status",
+              language: "bash",
+              explanation: "These commands help you start a new Git repository:\n- git init creates a new Git repository in the current directory\n- git status shows the current state of your repository, including modified files and staging area"
+            },
+            {
+              title: "Basic Git Workflow",
+              code: "# Add changes to staging area\ngit add filename.txt\n\n# Add all changes\ngit add .\n\n# Commit changes with a message\ngit commit -m \"Add initial files\"\n\n# View commit history\ngit log",
+              language: "bash",
+              explanation: "This demonstrates the basic Git workflow:\n- git add stages changes for the next commit\n- git commit saves the staged changes with a descriptive message\n- git log shows the commit history with details like author, date, and message"
+            }
           ]
         },
         {
@@ -187,6 +245,20 @@ const CoursePage = () => {
               label: "GitHub Workflow",
               fileUrl: "#",
               fileType: "pdf"
+            }
+          ],
+          codeExamples: [
+            {
+              title: "Connect to GitHub",
+              code: "# Add a remote repository\ngit remote add origin https://github.com/username/repository.git\n\n# Push your local repository to GitHub\ngit push -u origin main",
+              language: "bash",
+              explanation: "These commands connect your local repository to GitHub:\n- git remote add creates a connection to a remote repository\n- git push uploads your commits to the remote repository\n- The -u flag sets up tracking, so you can use 'git push' without arguments next time"
+            },
+            {
+              title: "Collaborate with Others",
+              code: "# Clone an existing repository\ngit clone https://github.com/username/repository.git\n\n# Pull changes from remote repository\ngit pull origin main\n\n# Create a new branch for your feature\ngit checkout -b feature-name",
+              language: "bash",
+              explanation: "These commands help you collaborate with others on GitHub:\n- git clone downloads a repository from GitHub to your computer\n- git pull fetches and merges changes from the remote repository\n- git checkout -b creates a new branch for developing features without affecting the main codebase"
             }
           ]
         }
@@ -280,6 +352,21 @@ const CoursePage = () => {
                   <h3 className="text-xl font-semibold mb-2">Description</h3>
                   <p>{activeTopic.description}</p>
                 </div>
+                
+                {activeTopic.codeExamples && activeTopic.codeExamples.length > 0 && (
+                  <div className="mb-8">
+                    <h3 className="text-xl font-semibold mb-4">Code Examples</h3>
+                    {activeTopic.codeExamples.map((example, index) => (
+                      <CodeExample 
+                        key={index}
+                        title={example.title}
+                        code={example.code}
+                        language={example.language}
+                        explanation={example.explanation}
+                      />
+                    ))}
+                  </div>
+                )}
                 
                 <div className="mb-8">
                   <h3 className="text-xl font-semibold mb-4">Resources</h3>
