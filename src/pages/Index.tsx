@@ -1,45 +1,30 @@
-
+import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import CourseCard from "../components/courses/CourseCard";
 import { ArrowRight, BookText, FileCheck, CalendarClock } from "lucide-react";
+import { getCourses } from "../utils/courseStorage";
 
 const Index = () => {
-  const courses = [
-    {
-      title: "Python Fundamentals",
-      description: "Learn Python from scratch including variables, loops, functions and more.",
-      image: "photo-1461749280684-dccba630e2f6",
-      slug: "python",
-      level: "beginner",
-      topicCount: 12
-    },
-    {
-      title: "JavaScript Essentials",
-      description: "Master the language of the web with this comprehensive JavaScript course.",
-      image: "photo-1498050108023-c5249f4df085",
-      slug: "javascript",
-      level: "beginner",
-      topicCount: 10
-    },
-    {
-      title: "HTML & CSS Basics",
-      description: "Create your first website with these fundamental web technologies.",
-      image: "photo-1486312338219-ce68d2c6f44d",
-      slug: "html-css",
-      level: "beginner",
-      topicCount: 8
-    },
-    {
-      title: "Git & Version Control",
-      description: "Learn how to effectively track changes and collaborate on code projects.",
-      image: "photo-1518770660439-4636190af475",
-      slug: "git",
-      level: "intermediate",
-      topicCount: 6
-    }
-  ];
+  const [courses, setCourses] = useState<any[]>([]);
+  
+  useEffect(() => {
+    // Get courses from localStorage
+    const coursesData = getCourses();
+    
+    // Transform the data for the CourseCard component
+    const formattedCourses = Object.entries(coursesData).map(([id, course]: [string, any]) => ({
+      title: course.title,
+      description: course.description,
+      image: course.banner,
+      slug: id,
+      level: id === "python" || id === "html-css" ? "beginner" : "intermediate",
+      topicCount: course.content?.length || 0
+    }));
+    
+    setCourses(formattedCourses);
+  }, []);
 
   return (
     <>
@@ -122,7 +107,7 @@ console.log(area); // 50`}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {courses.map((course) => (
+            {courses.map((course: any) => (
               <CourseCard
                 key={course.slug}
                 title={course.title}
