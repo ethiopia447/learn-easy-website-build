@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -21,7 +21,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import QuestionsList from "./QuestionsList";
 import CodeEditor from "./CodeEditor";
 import { toast } from "@/components/ui/sonner";
-import { saveQuestion, getQuestions } from "../../utils/questionStorage";
+import { saveQuestion, getQuestions, saveMultipleQuestions } from "../../utils/questionStorage";
 
 export type QuestionType = "multipleChoice" | "shortAnswer" | "codeChallenge";
 
@@ -36,6 +36,7 @@ export interface Question {
   type: QuestionType;
   text: string;
   courseId?: string;
+  topicId?: string;
   options?: Option[];
   answer?: string;
   codeSnippet?: string;
@@ -43,18 +44,36 @@ export interface Question {
   explanation?: string;
 }
 
-const TestMaker = () => {
+interface TestMakerProps {
+  courseId?: string;
+  topicId?: string;
+  onQuestionsAdded?: (questions: Question[]) => void;
+  embedded?: boolean;
+}
+
+const TestMaker = ({ courseId, topicId, onQuestionsAdded, embedded = false }: TestMakerProps) => {
   const [activeTab, setActiveTab] = useState<QuestionType>("multipleChoice");
   const [questions, setQuestions] = useState<Question[]>(getQuestions());
   const [currentQuestion, setCurrentQuestion] = useState<Question>({
     id: `q-${Date.now()}`,
     type: "multipleChoice",
+    courseId,
+    topicId,
     text: "",
     options: [
       { id: `o-${Date.now()}-1`, text: "", isCorrect: false },
       { id: `o-${Date.now()}-2`, text: "", isCorrect: false },
     ]
   });
+  
+  // Update questions when the courseId or topicId changes
+  useEffect(() => {
+    setCurrentQuestion(prevQuestion => ({
+      ...prevQuestion,
+      courseId,
+      topicId
+    }));
+  }, [courseId, topicId]);
 
   const handleQuestionTypeChange = (type: QuestionType) => {
     setActiveTab(type);
@@ -129,6 +148,15 @@ const TestMaker = () => {
     setCurrentQuestion({ ...currentQuestion, options: updatedOptions });
   };
 
+  // Function to handle form submission when Enter key is pressed
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    // Only prevent default behavior for Enter without Shift
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSaveQuestion();
+    }
+  };
+
   const handleSaveQuestion = () => {
     // Validate question data
     if (!currentQuestion.text.trim()) {
@@ -168,18 +196,28 @@ const TestMaker = () => {
     // Save question
     const questionToSave = {
       ...currentQuestion,
-      id: `q-${Date.now()}` // Generate new ID for the question
+      id: `q-${Date.now()}`, // Generate new ID for the question
+      courseId, // Ensure courseId is set
+      topicId  // Ensure topicId is set
     };
     
     saveQuestion(questionToSave);
     
+    // If we're in embedded mode and have a callback, call it
+    if (embedded && onQuestionsAdded) {
+      onQuestionsAdded([questionToSave]);
+    }
+    
     // Update questions list
-    setQuestions(getQuestions());
+    const updatedQuestions = getQuestions();
+    setQuestions(updatedQuestions);
     
     // Reset form
     setCurrentQuestion({
       id: `q-${Date.now()}`,
       type: activeTab,
+      courseId,
+      topicId,
       text: "",
       options: activeTab === "multipleChoice" 
         ? [
@@ -204,7 +242,7 @@ const TestMaker = () => {
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
-          <h2 className="text-2xl font-bold">Test Maker</h2>
+          <h2 className="text-2xl font-bold">{embedded ? "Create Test Questions" : "Test Maker"}</h2>
           <p className="text-gray-600">Create questions and exercises for your courses</p>
         </div>
         <Button onClick={handleSaveQuestion} className="gap-2">
@@ -212,9 +250,9 @@ const TestMaker = () => {
         </Button>
       </div>
       
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+      <div className={`grid grid-cols-1 ${embedded ? "" : "lg:grid-cols-3"} gap-6`}>
         {/* Question Editor */}
-        <div className="lg:col-span-2">
+        <div className={embedded ? "" : "lg:col-span-2"}>
           <Card>
             <CardHeader>
               <CardTitle>Question Editor</CardTitle>
@@ -246,6 +284,7 @@ const TestMaker = () => {
                     className="mt-1"
                     value={currentQuestion.text}
                     onChange={(e) => handleQuestionTextChange(e.target.value)}
+                    onKeyDown={handleKeyDown}
                     rows={3}
                   />
                 </div>
@@ -382,10 +421,12 @@ const TestMaker = () => {
           </Card>
         </div>
         
-        {/* Questions List */}
-        <div className="lg:col-span-1">
-          <QuestionsList questions={questions} onLoadQuestion={handleLoadQuestion} />
-        </div>
+        {/* Questions List - Only show when not in embedded mode */}
+        {!embedded && (
+          <div className="lg:col-span-1">
+            <QuestionsList questions={questions} onLoadQuestion={handleLoadQuestion} />
+          </div>
+        )}
       </div>
     </div>
   );

@@ -43,3 +43,27 @@ export const getQuestionsByCourse = (courseId: string): Question[] => {
   const questions = getQuestions();
   return questions.filter(q => q.courseId === courseId);
 };
+
+// Get questions for a specific topic
+export const getQuestionsByTopic = (topicId: string): Question[] => {
+  const questions = getQuestions();
+  return questions.filter(q => q.topicId === topicId);
+};
+
+// Save multiple questions at once
+export const saveMultipleQuestions = (questions: Question[]): void => {
+  const existingQuestions = getQuestions();
+  
+  // For each new question, check if it exists and update or add
+  questions.forEach(newQuestion => {
+    const existingIndex = existingQuestions.findIndex(q => q.id === newQuestion.id);
+    
+    if (existingIndex >= 0) {
+      existingQuestions[existingIndex] = newQuestion;
+    } else {
+      existingQuestions.push(newQuestion);
+    }
+  });
+  
+  localStorage.setItem("course_questions", JSON.stringify(existingQuestions));
+};

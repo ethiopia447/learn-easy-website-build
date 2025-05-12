@@ -5,6 +5,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { ChevronDown, ChevronUp, Plus, Trash, X } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
+import TestMaker, { Question } from "./TestMaker";
 
 interface ContentItemFormProps {
   content: any;
@@ -25,6 +26,8 @@ const ContentItemForm = ({
 }: ContentItemFormProps) => {
   const [codeExamples, setCodeExamples] = useState(content.codeExamples || []);
   const [resources, setResources] = useState(content.resources || []);
+  const [questions, setQuestions] = useState(content.questions || []);
+  const [showTestMaker, setShowTestMaker] = useState(false);
 
   const handleInputChange = (field: string, value: string) => {
     onChange({
@@ -106,6 +109,19 @@ const ContentItemForm = ({
       ...content,
       resources: updated
     });
+  };
+
+  const handleQuestionsAdded = (newQuestions: Question[]) => {
+    const updatedQuestions = [...questions, ...newQuestions];
+    setQuestions(updatedQuestions);
+    
+    onChange({
+      ...content,
+      questions: updatedQuestions
+    });
+    
+    // Optionally hide test maker after adding questions
+    // setShowTestMaker(false);
   };
 
   return (
@@ -314,6 +330,60 @@ const ContentItemForm = ({
                     >
                       <Plus size={14} /> Add Code Example
                     </Button>
+                  </div>
+                </AccordionContent>
+              </AccordionItem>
+              
+              <AccordionItem value="questions">
+                <AccordionTrigger className="py-2">
+                  Test Questions ({questions.length})
+                </AccordionTrigger>
+                <AccordionContent>
+                  <div className="space-y-4 pt-2">
+                    {questions.length > 0 && (
+                      <div className="border rounded-md p-3 mb-4">
+                        <p className="text-sm font-medium mb-2">Added Questions ({questions.length})</p>
+                        <ul className="text-sm space-y-1">
+                          {questions.map((q: Question, idx: number) => (
+                            <li key={idx} className="text-gray-700 flex items-center justify-between">
+                              <span className="truncate">{q.text}</span>
+                              <span className="text-xs text-gray-500 ml-2">{q.type}</span>
+                            </li>
+                          ))}
+                        </ul>
+                      </div>
+                    )}
+                    
+                    {showTestMaker ? (
+                      <div>
+                        <TestMaker 
+                          courseId={content.courseId}
+                          topicId={content.id}
+                          onQuestionsAdded={handleQuestionsAdded}
+                          embedded={true}
+                        />
+                        
+                        <Button
+                          type="button"
+                          variant="outline"
+                          size="sm"
+                          onClick={() => setShowTestMaker(false)}
+                          className="w-full mt-4"
+                        >
+                          Hide Question Editor
+                        </Button>
+                      </div>
+                    ) : (
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setShowTestMaker(true)}
+                        className="w-full gap-2"
+                      >
+                        <Plus size={14} /> Add Test Question
+                      </Button>
+                    )}
                   </div>
                 </AccordionContent>
               </AccordionItem>
