@@ -24,6 +24,15 @@ interface CourseItem {
   level: string;
 }
 
+// Define the structure of a course in storage
+interface StoredCourse {
+  id: string;
+  title: string;
+  description: string;
+  banner?: string;
+  content?: Array<any>;
+}
+
 const CoursesList = ({ onEditCourse }: CoursesListProps) => {
   const [courses, setCourses] = useState<CourseItem[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -38,9 +47,9 @@ const CoursesList = ({ onEditCourse }: CoursesListProps) => {
     
     const formattedCourses = Object.entries(coursesData).map(([id, course]) => ({
       id,
-      title: course.title,
-      description: course.description,
-      contentCount: course.content?.length || 0,
+      title: (course as StoredCourse).title,
+      description: (course as StoredCourse).description,
+      contentCount: (course as StoredCourse).content?.length || 0,
       level: id === "python" || id === "html-css" ? "beginner" : "intermediate",
     }));
     
