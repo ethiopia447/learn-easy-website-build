@@ -5,9 +5,11 @@ import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PlusCircle, FileEdit, Book } from "lucide-react";
+import { PlusCircle, FileEdit, Book, LogOut } from "lucide-react";
 import CoursesList from "../components/admin/CoursesList";
 import CourseForm from "../components/admin/CourseForm";
+import { logoutUser } from "../utils/firebase";
+import { toast } from "@/components/ui/sonner";
 
 const AdminPage = () => {
   const navigate = useNavigate();
@@ -34,6 +36,17 @@ const AdminPage = () => {
     setEditingCourse(null);
   };
 
+  const handleLogout = async () => {
+    try {
+      await logoutUser();
+      toast.success("Logged out successfully");
+      navigate("/login");
+    } catch (error) {
+      toast.error("Failed to logout");
+      console.error(error);
+    }
+  };
+
   return (
     <>
       <Navbar />
@@ -45,11 +58,16 @@ const AdminPage = () => {
             <p className="text-gray-600">Manage your courses and resources</p>
           </div>
           
-          {!isAdding && !editingCourse && (
-            <Button onClick={handleAddNew} className="gap-2">
-              <PlusCircle size={16} /> Add New Course
+          <div className="flex gap-2">
+            {!isAdding && !editingCourse && (
+              <Button onClick={handleAddNew} className="gap-2">
+                <PlusCircle size={16} /> Add New Course
+              </Button>
+            )}
+            <Button variant="outline" onClick={handleLogout} className="gap-2">
+              <LogOut size={16} /> Logout
             </Button>
-          )}
+          </div>
         </div>
         
         <Tabs defaultValue="courses" className="mb-10">
