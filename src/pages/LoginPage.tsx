@@ -37,8 +37,8 @@ const LoginPage = () => {
       await loginWithEmailAndPassword(values.email, values.password);
       toast.success("Login successful!");
       navigate("/admin");
-    } catch (error) {
-      toast.error("Failed to login. Please check your credentials.");
+    } catch (error: any) {
+      toast.error(`Failed to login: ${error.message || "Please check your credentials."}`);
       console.error(error);
     } finally {
       setIsLoading(false);
@@ -58,6 +58,7 @@ const LoginPage = () => {
           <div className="text-center mb-6">
             <h1 className="text-2xl font-bold">Admin Login</h1>
             <p className="text-gray-600 mt-2">Enter your credentials to access the admin panel</p>
+            <p className="text-sm text-blue-600 mt-1">Using Firebase Authentication</p>
           </div>
 
           <Form {...form}>

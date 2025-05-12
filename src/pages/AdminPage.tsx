@@ -10,9 +10,11 @@ import CoursesList from "../components/admin/CoursesList";
 import CourseForm from "../components/admin/CourseForm";
 import { logoutUser } from "../utils/firebase";
 import { toast } from "@/components/ui/sonner";
+import { useAuth } from "../contexts/AuthContext";
 
 const AdminPage = () => {
   const navigate = useNavigate();
+  const { currentUser } = useAuth();
   const [isAdding, setIsAdding] = useState(false);
   const [editingCourse, setEditingCourse] = useState<string | null>(null);
 
@@ -56,6 +58,9 @@ const AdminPage = () => {
           <div>
             <h1 className="text-3xl font-bold">Admin Panel</h1>
             <p className="text-gray-600">Manage your courses and resources</p>
+            {currentUser && (
+              <p className="text-sm text-blue-600">Logged in as: {currentUser.email}</p>
+            )}
           </div>
           
           <div className="flex gap-2">
