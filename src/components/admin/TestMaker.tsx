@@ -153,8 +153,34 @@ const TestMaker = ({ courseId, topicId, onQuestionsAdded, embedded = false }: Te
     // Only prevent default behavior for Enter without Shift
     if (e.key === 'Enter' && !e.shiftKey) {
       e.preventDefault();
-      handleSaveQuestion();
+      
+      // Focus the next appropriate field based on question type
+      if (currentQuestion.type === "multipleChoice" && currentQuestion.options && currentQuestion.options.length > 0) {
+        // Focus first option
+        const firstOptionInput = document.getElementById(`option-${currentQuestion.options[0].id}`);
+        if (firstOptionInput) {
+          firstOptionInput.focus();
+        }
+      } else if (currentQuestion.type === "shortAnswer") {
+        // Focus the answer textarea
+        const answerInput = document.getElementById("correct-answer");
+        if (answerInput) {
+          answerInput.focus();
+        }
+      } else if (currentQuestion.type === "codeChallenge") {
+        // Focus the expected solution
+        const solutionInput = document.getElementById("expected-solution");
+        if (solutionInput) {
+          solutionInput.focus();
+        }
+      }
     }
+  };
+
+  // Function to handle the form submission
+  const handleFormSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    handleSaveQuestion();
   };
 
   const handleSaveQuestion = () => {
@@ -258,7 +284,7 @@ const TestMaker = ({ courseId, topicId, onQuestionsAdded, embedded = false }: Te
               <CardTitle>Question Editor</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="space-y-6">
+              <form onSubmit={handleFormSubmit} className="space-y-6">
                 <div>
                   <Label htmlFor="question-type">Question Type</Label>
                   <Tabs value={activeTab} onValueChange={(val) => handleQuestionTypeChange(val as QuestionType)} className="mt-2">
@@ -301,6 +327,7 @@ const TestMaker = ({ courseId, topicId, onQuestionsAdded, embedded = false }: Te
                         <div key={option.id} className="flex items-center gap-3 mb-2">
                           <RadioGroupItem value={option.id} id={option.id} />
                           <Input 
+                            id={`option-${option.id}`}
                             value={option.text}
                             onChange={(e) => handleOptionTextChange(option.id, e.target.value)}
                             placeholder={`Option ${index + 1}`}
@@ -416,7 +443,13 @@ const TestMaker = ({ courseId, topicId, onQuestionsAdded, embedded = false }: Te
                     </div>
                   </div>
                 </TabsContent>
-              </div>
+                
+                <div className="flex justify-end">
+                  <Button type="submit" className="gap-2">
+                    <Save size={16} /> Save Question
+                  </Button>
+                </div>
+              </form>
             </CardContent>
           </Card>
         </div>
