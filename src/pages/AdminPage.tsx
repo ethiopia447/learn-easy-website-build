@@ -5,9 +5,10 @@ import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { PlusCircle, FileEdit, Book, LogOut } from "lucide-react";
+import { PlusCircle, FileEdit, Book, LogOut, TestTube } from "lucide-react";
 import CoursesList from "../components/admin/CoursesList";
 import CourseForm from "../components/admin/CourseForm";
+import TestMaker from "../components/admin/TestMaker";
 import { logoutUser } from "../utils/firebase";
 import { toast } from "@/components/ui/sonner";
 import { useAuth } from "../contexts/AuthContext";
@@ -80,6 +81,9 @@ const AdminPage = () => {
             <TabsTrigger value="courses" className="gap-2">
               <Book size={16} /> Courses
             </TabsTrigger>
+            <TabsTrigger value="tests" className="gap-2">
+              <TestTube size={16} /> Tests
+            </TabsTrigger>
             <TabsTrigger value="resources" className="gap-2">
               <FileEdit size={16} /> Resources
             </TabsTrigger>
@@ -103,6 +107,9 @@ const AdminPage = () => {
             ) : (
               <CoursesList onEditCourse={handleEditCourse} />
             )}
+          </TabsContent>
+          <TabsContent value="tests" className="mt-6">
+            <TestMaker />
           </TabsContent>
           <TabsContent value="resources" className="mt-6">
             <div className="bg-white p-6 rounded-lg border">
