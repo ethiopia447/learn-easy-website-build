@@ -1,3 +1,4 @@
+
 import { Link } from "react-router-dom";
 import { Code, Github, Linkedin, Twitter } from "lucide-react";
 const Footer = () => {
@@ -72,7 +73,7 @@ const Footer = () => {
         </div>
         <div className="mt-8 border-t border-gray-200 pt-8">
           <p className="text-center text-gray-500 text-sm">
-            © {new Date().getFullYear()} LearnEasy. All rights reserved.
+            © {new Date().getFullYear()} Geeze. All rights reserved.
           </p>
         </div>
       </div>

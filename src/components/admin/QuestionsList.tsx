@@ -62,7 +62,7 @@ const QuestionsList = ({ questions, onLoadQuestion }: QuestionsListProps) => {
       </CardHeader>
       <CardContent>
         <div className="space-y-4">
-          <div className="flex items-center gap-2 mb-4">
+          <div className="flex flex-wrap items-center gap-2 mb-4">
             <Button 
               variant={filter === null ? "default" : "outline"} 
               size="sm" 
