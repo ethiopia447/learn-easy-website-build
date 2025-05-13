@@ -1,16 +1,13 @@
-
 import { Link } from "react-router-dom";
 import { Code, Github, Linkedin, Twitter } from "lucide-react";
-
 const Footer = () => {
-  return (
-    <footer className="bg-gray-50 border-t">
+  return <footer className="bg-gray-50 border-t">
       <div className="max-w-7xl mx-auto py-12 px-4 sm:px-6 lg:px-8">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
           <div className="col-span-1 md:col-span-2">
             <div className="flex items-center gap-2 mb-4">
               <Code size={24} className="text-primary" />
-              <span className="text-xl font-bold">LearnEasy</span>
+              <span className="text-xl font-bold">Geeze</span>
             </div>
             <p className="text-gray-600 max-w-md">
               A free learning platform focused on making programming accessible to everyone.
@@ -79,8 +76,6 @@ const Footer = () => {
           </p>
         </div>
       </div>
-    </footer>
-  );
+    </footer>;
 };
-
 export default Footer;
