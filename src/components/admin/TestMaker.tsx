@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -264,6 +263,28 @@ const TestMaker = ({ courseId, topicId, onQuestionsAdded, embedded = false }: Te
     setCurrentQuestion(question);
   };
 
+  // Function to add sample test questions
+  const handleAddSampleQuestions = () => {
+    const { addSampleTestQuestions, getQuestions } = require('../../utils/questionStorage');
+    
+    // Add sample questions with the current courseId and topicId
+    addSampleTestQuestions(courseId, topicId);
+    
+    // Update questions list
+    const updatedQuestions = getQuestions();
+    setQuestions(updatedQuestions);
+    
+    // If we're in embedded mode and have a callback, call it with the new questions
+    if (embedded && onQuestionsAdded) {
+      const newQuestions = updatedQuestions.filter(q => 
+        q.courseId === courseId && q.topicId === topicId
+      );
+      onQuestionsAdded(newQuestions);
+    }
+    
+    toast.success("Sample questions added successfully!");
+  };
+
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
@@ -271,9 +292,14 @@ const TestMaker = ({ courseId, topicId, onQuestionsAdded, embedded = false }: Te
           <h2 className="text-2xl font-bold">{embedded ? "Create Test Questions" : "Test Maker"}</h2>
           <p className="text-gray-600">Create questions and exercises for your courses</p>
         </div>
-        <Button onClick={handleSaveQuestion} className="gap-2">
-          <Save size={16} /> Save Question
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" onClick={handleAddSampleQuestions} className="gap-2">
+            <ListOrdered size={16} /> Add Sample Questions
+          </Button>
+          <Button onClick={handleSaveQuestion} className="gap-2">
+            <Save size={16} /> Save Question
+          </Button>
+        </div>
       </div>
       
       <div className={`grid grid-cols-1 ${embedded ? "" : "lg:grid-cols-3"} gap-6`}>

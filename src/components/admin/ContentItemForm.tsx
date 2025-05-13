@@ -1,11 +1,12 @@
-
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ChevronDown, ChevronUp, Plus, Trash, X } from "lucide-react";
+import { ChevronDown, ChevronUp, Plus, Trash, X, ListOrdered } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import TestMaker, { Question } from "./TestMaker";
+import { addSampleTestQuestions, getQuestionsByTopic } from "../../utils/questionStorage";
+import { toast } from "@/components/ui/sonner";
 
 interface ContentItemFormProps {
   content: any;
@@ -122,6 +123,23 @@ const ContentItemForm = ({
     
     // Optionally hide test maker after adding questions
     // setShowTestMaker(false);
+  };
+
+  // Function to add sample test questions
+  const handleAddSampleQuestions = () => {
+    // Add sample questions with the current courseId and topicId
+    addSampleTestQuestions(content.courseId, content.id);
+    
+    // Get questions for this topic
+    const topicQuestions = getQuestionsByTopic(content.id);
+    setQuestions(topicQuestions);
+    
+    onChange({
+      ...content,
+      questions: topicQuestions
+    });
+    
+    toast.success("Sample questions added successfully!");
   };
 
   return (
@@ -353,6 +371,18 @@ const ContentItemForm = ({
                         </ul>
                       </div>
                     )}
+                    
+                    <div className="flex gap-2 mb-4">
+                      <Button
+                        type="button"
+                        variant="outline"
+                        size="sm"
+                        onClick={handleAddSampleQuestions}
+                        className="gap-2"
+                      >
+                        <ListOrdered size={16} /> Add Sample Questions
+                      </Button>
+                    </div>
                     
                     {showTestMaker ? (
                       <div>
