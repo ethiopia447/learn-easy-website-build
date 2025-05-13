@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -277,6 +276,7 @@ const TestMaker = ({ courseId, topicId, onQuestionsAdded, embedded = false }: Te
                   </div>
                 )}
                 
+                {/* Short Answer and Code Challenge */}
                 {(activeTab === "shortAnswer" || activeTab === "codeChallenge") && (
                   <div className="space-y-2">
                     <Label htmlFor="correct-answer" className="text-lg font-medium">Answer:</Label>
@@ -377,7 +377,6 @@ const TestMaker = ({ courseId, topicId, onQuestionsAdded, embedded = false }: Te
                 <QuestionsList 
                   questions={filteredQuestions} 
                   onLoadQuestion={handleLoadQuestion} 
-                  useFilters={false}
                 />
               </CardContent>
             </Card>

@@ -172,7 +172,7 @@ console.log(area); // 50`}
                 </p>
                 <Link
                   to="/course/python"
-                  className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-primary bg-white hover:bg-gray-50"
+                  className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-primary-900 bg-white hover:bg-gray-50"
                 >
                   Get Started Now
                   <ArrowRight size={16} className="ml-2" />

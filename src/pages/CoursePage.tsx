@@ -1,5 +1,4 @@
-
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import VideoEmbed from "../components/common/VideoEmbed";
@@ -10,6 +9,7 @@ import { ArrowRight, CheckCircle, FileText, Youtube } from "lucide-react";
 import { getCourse } from "../utils/courseStorage";
 import { getQuestionsByTopic } from "../utils/questionStorage";
 import { Button } from "@/components/ui/button";
+import { toast } from "@/components/ui/sonner";
 
 interface CodeExampleType {
   title: string;
@@ -41,6 +41,7 @@ interface Course {
 
 const CoursePage = () => {
   const { courseId } = useParams();
+  const navigate = useNavigate();
   const [activeTopicIndex, setActiveTopicIndex] = useState(0);
   const [course, setCourse] = useState<Course | null>(null);
   const [isLoading, setIsLoading] = useState(true);
@@ -63,6 +64,20 @@ const CoursePage = () => {
   }, [course, activeTopicIndex]);
 
   const activeTopic = course?.content?.[activeTopicIndex];
+
+  const handleStartPracticeTest = () => {
+    if (course && activeTopic) {
+      // In a real app, this would navigate to a practice test page with the questions
+      // For now, show a toast and log the questions to console
+      console.log("Starting practice test for:", activeTopic.title);
+      console.log("Questions:", topicQuestions);
+      
+      toast.success(`Started practice test for ${activeTopic.title} with ${topicQuestions.length} questions`);
+      
+      // Simulate navigation to a test page (you would normally create a TestPage component)
+      // navigate(`/test/${courseId}/${activeTopic.id}`);
+    }
+  };
 
   if (isLoading) {
     return (
@@ -196,7 +211,7 @@ const CoursePage = () => {
                     <h3 className="text-xl font-semibold mb-4">Practice Questions</h3>
                     <div className="bg-gray-50 dark:bg-slate-800 p-4 rounded-lg">
                       <p className="mb-2">This topic has {topicQuestions.length} practice questions available.</p>
-                      <Button>
+                      <Button onClick={handleStartPracticeTest}>
                         Start Practice Test
                       </Button>
                     </div>
