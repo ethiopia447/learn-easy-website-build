@@ -37,7 +37,7 @@ const CourseCard = ({ title, description, image, slug, level, topicCount }: Cour
             to={`/course/${slug}`}
             className="text-primary hover:text-primary-600 flex items-center text-sm font-medium"
           >
-            <span>Start learning</span>
+            <span>Start Learning</span>
             <ArrowRight size={16} className="ml-1" />
           </Link>
         </div>

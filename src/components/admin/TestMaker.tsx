@@ -302,8 +302,9 @@ const TestMaker = ({ courseId, topicId, onQuestionsAdded, embedded = false }: Te
                   </Tabs>
                 </div>
                 
-                <div>
-                  <Label htmlFor="question-text">Question</Label>
+                {/* Question Text - Always shown */}
+                <div className="p-4 border rounded-md bg-gray-50">
+                  <Label htmlFor="question-text" className="text-lg font-medium mb-2 block">Question</Label>
                   <Textarea 
                     id="question-text"
                     placeholder="Enter your question here..."
@@ -315,16 +316,17 @@ const TestMaker = ({ courseId, topicId, onQuestionsAdded, embedded = false }: Te
                   />
                 </div>
 
-                <TabsContent value="multipleChoice" className="mt-0 p-0 border-0">
-                  <div className="space-y-4">
-                    <Label>Options <span className="text-xs text-gray-500">(select one correct answer)</span></Label>
+                <TabsContent value="multipleChoice" className="mt-4 p-0 border-0">
+                  <div className="p-4 border rounded-md bg-white shadow-sm space-y-4">
+                    <Label className="text-lg font-medium">Answer Options</Label>
                     
                     <RadioGroup 
                       value={currentQuestion.options?.find(o => o.isCorrect)?.id || ""} 
                       onValueChange={handleCorrectOptionChange}
+                      className="space-y-3"
                     >
                       {currentQuestion.options?.map((option, index) => (
-                        <div key={option.id} className="flex items-center gap-3 mb-2">
+                        <div key={option.id} className="flex items-center gap-3 p-2 border rounded-md hover:bg-gray-50">
                           <RadioGroupItem value={option.id} id={option.id} />
                           <Input 
                             id={`option-${option.id}`}
@@ -360,21 +362,21 @@ const TestMaker = ({ courseId, topicId, onQuestionsAdded, embedded = false }: Te
                   </div>
                 </TabsContent>
                 
-                <TabsContent value="shortAnswer" className="mt-0 p-0 border-0">
-                  <div className="space-y-4">
+                <TabsContent value="shortAnswer" className="mt-4 p-0 border-0">
+                  <div className="p-4 border rounded-md bg-white shadow-sm space-y-4">
                     <div>
-                      <Label htmlFor="correct-answer">Correct Answer</Label>
+                      <Label htmlFor="correct-answer" className="text-lg font-medium block mb-2">Correct Answer</Label>
                       <Textarea 
                         id="correct-answer"
                         placeholder="Enter the correct answer..."
                         className="mt-1 font-mono"
                         value={currentQuestion.answer || ""}
                         onChange={(e) => handleAnswerChange(e.target.value)}
-                        rows={2}
+                        rows={4}
                       />
                     </div>
                     <div>
-                      <Label htmlFor="explanation">Explanation (Optional)</Label>
+                      <Label htmlFor="explanation" className="font-medium block mb-1">Explanation (Optional)</Label>
                       <Textarea 
                         id="explanation"
                         placeholder="Explain the answer..."
@@ -387,10 +389,10 @@ const TestMaker = ({ courseId, topicId, onQuestionsAdded, embedded = false }: Te
                   </div>
                 </TabsContent>
                 
-                <TabsContent value="codeChallenge" className="mt-0 p-0 border-0">
-                  <div className="space-y-4">
+                <TabsContent value="codeChallenge" className="mt-4 p-0 border-0">
+                  <div className="p-4 border rounded-md bg-white shadow-sm space-y-4">
                     <div>
-                      <Label htmlFor="code-language">Language</Label>
+                      <Label htmlFor="code-language" className="font-medium block mb-1">Language</Label>
                       <select
                         id="code-language"
                         className="w-full border rounded-md h-10 px-3 text-sm mt-1"
@@ -408,8 +410,8 @@ const TestMaker = ({ courseId, topicId, onQuestionsAdded, embedded = false }: Te
                     </div>
                     
                     <div>
-                      <Label htmlFor="code-snippet">Code Snippet</Label>
-                      <div className="mt-1">
+                      <Label htmlFor="code-snippet" className="font-medium block mb-1">Code Snippet</Label>
+                      <div className="mt-1 border rounded-md overflow-hidden">
                         <CodeEditor
                           value={currentQuestion.codeSnippet || "// Write your code here"}
                           language={currentQuestion.codeLanguage || "javascript"}
@@ -419,19 +421,19 @@ const TestMaker = ({ courseId, topicId, onQuestionsAdded, embedded = false }: Te
                     </div>
                     
                     <div>
-                      <Label htmlFor="expected-solution">Expected Solution/Output</Label>
+                      <Label htmlFor="expected-solution" className="text-lg font-medium block mb-2">Expected Solution/Output</Label>
                       <Textarea 
                         id="expected-solution"
                         placeholder="Enter the expected solution or output..."
                         className="mt-1 font-mono"
                         value={currentQuestion.answer || ""}
                         onChange={(e) => handleAnswerChange(e.target.value)}
-                        rows={3}
+                        rows={4}
                       />
                     </div>
                     
                     <div>
-                      <Label htmlFor="code-explanation">Explanation (Optional)</Label>
+                      <Label htmlFor="code-explanation" className="font-medium block mb-1">Explanation (Optional)</Label>
                       <Textarea 
                         id="code-explanation"
                         placeholder="Explain the solution..."
