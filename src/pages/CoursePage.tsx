@@ -8,6 +8,8 @@ import CodeExample from "../components/common/CodeExample";
 import { useState, useEffect } from "react";
 import { ArrowRight, CheckCircle, FileText, Youtube } from "lucide-react";
 import { getCourse } from "../utils/courseStorage";
+import { getQuestionsByTopic } from "../utils/questionStorage";
+import { Button } from "@/components/ui/button";
 
 interface CodeExampleType {
   title: string;
@@ -42,6 +44,7 @@ const CoursePage = () => {
   const [activeTopicIndex, setActiveTopicIndex] = useState(0);
   const [course, setCourse] = useState<Course | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [topicQuestions, setTopicQuestions] = useState<any[]>([]);
 
   useEffect(() => {
     if (courseId) {
@@ -50,6 +53,14 @@ const CoursePage = () => {
       setIsLoading(false);
     }
   }, [courseId]);
+
+  useEffect(() => {
+    if (course && course.content && course.content[activeTopicIndex]) {
+      const topicId = course.content[activeTopicIndex].id;
+      const questions = getQuestionsByTopic(topicId);
+      setTopicQuestions(questions || []);
+    }
+  }, [course, activeTopicIndex]);
 
   const activeTopic = course?.content?.[activeTopicIndex];
 
@@ -86,10 +97,10 @@ const CoursePage = () => {
     <>
       <Navbar />
       
-      <div className="bg-primary/10 py-8">
+      <div className="bg-primary/10 dark:bg-primary/5 py-8">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <h1 className="text-3xl font-bold">{course.title}</h1>
-          <p className="text-lg text-gray-700 max-w-3xl">{course.description}</p>
+          <p className="text-lg text-gray-700 dark:text-gray-300 max-w-3xl">{course.description}</p>
         </div>
       </div>
 
@@ -97,7 +108,7 @@ const CoursePage = () => {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8">
           {/* Sidebar */}
           <div className="lg:col-span-1">
-            <div className="bg-gray-50 rounded-lg p-6 sticky top-4">
+            <div className="bg-gray-50 dark:bg-slate-800 rounded-lg p-6 sticky top-4">
               <h3 className="text-lg font-semibold mb-4">Course Contents</h3>
               <div className="space-y-2">
                 {course.content.map((topic, index) => (
@@ -107,7 +118,7 @@ const CoursePage = () => {
                     className={`flex items-start w-full text-left p-3 rounded-md ${
                       index === activeTopicIndex
                         ? "bg-primary text-white"
-                        : "hover:bg-gray-100"
+                        : "hover:bg-gray-100 dark:hover:bg-slate-700"
                     }`}
                   >
                     <span className="flex-shrink-0 mr-2">
@@ -117,7 +128,7 @@ const CoursePage = () => {
                         <span className={`flex items-center justify-center w-5 h-5 rounded-full border ${
                           index === activeTopicIndex 
                             ? "border-white text-white" 
-                            : "border-gray-400 text-gray-400"
+                            : "border-gray-400 text-gray-400 dark:border-gray-500 dark:text-gray-400"
                           }`}>
                           {index + 1}
                         </span>
@@ -140,13 +151,13 @@ const CoursePage = () => {
                 
                 <div className="mb-6">
                   <VideoEmbed youtubeId={activeTopic.youtubeId} title={activeTopic.title} />
-                  <div className="flex items-center text-sm text-gray-600 mb-4">
+                  <div className="flex items-center text-sm text-gray-600 dark:text-gray-400 mb-4">
                     <Youtube size={16} className="text-red-600 mr-1" />
                     <span>Video Tutorial</span>
                   </div>
                 </div>
                 
-                <div className="prose max-w-none mb-8">
+                <div className="prose dark:prose-invert max-w-none mb-8">
                   <h3 className="text-xl font-semibold mb-2">Description</h3>
                   <p>{activeTopic.description}</p>
                 </div>
@@ -179,14 +190,26 @@ const CoursePage = () => {
                     ))}
                   </div>
                 </div>
+
+                {topicQuestions.length > 0 && (
+                  <div className="mb-8">
+                    <h3 className="text-xl font-semibold mb-4">Practice Questions</h3>
+                    <div className="bg-gray-50 dark:bg-slate-800 p-4 rounded-lg">
+                      <p className="mb-2">This topic has {topicQuestions.length} practice questions available.</p>
+                      <Button>
+                        Start Practice Test
+                      </Button>
+                    </div>
+                  </div>
+                )}
                 
-                <div className="border-t pt-6 mt-8 flex justify-between">
+                <div className="border-t pt-6 mt-8 flex justify-between dark:border-slate-700">
                   <button
                     onClick={() => activeTopicIndex > 0 && setActiveTopicIndex(activeTopicIndex - 1)}
                     className={`px-4 py-2 rounded border ${
                       activeTopicIndex === 0 
-                        ? "border-gray-200 text-gray-400 cursor-not-allowed" 
-                        : "border-gray-300 text-gray-700 hover:bg-gray-50"
+                        ? "border-gray-200 text-gray-400 cursor-not-allowed dark:border-gray-700 dark:text-gray-500" 
+                        : "border-gray-300 text-gray-700 hover:bg-gray-50 dark:border-gray-600 dark:text-gray-300 dark:hover:bg-gray-800"
                     }`}
                     disabled={activeTopicIndex === 0}
                   >
@@ -197,7 +220,7 @@ const CoursePage = () => {
                     onClick={() => activeTopicIndex < course.content.length - 1 && setActiveTopicIndex(activeTopicIndex + 1)}
                     className={`px-4 py-2 rounded flex items-center ${
                       activeTopicIndex === course.content.length - 1
-                        ? "border border-gray-200 text-gray-400 cursor-not-allowed"
+                        ? "border border-gray-200 text-gray-400 cursor-not-allowed dark:border-gray-700 dark:text-gray-500"
                         : "bg-primary text-white hover:bg-primary/90"
                     }`}
                     disabled={activeTopicIndex === course.content.length - 1}

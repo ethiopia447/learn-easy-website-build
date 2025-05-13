@@ -1,3 +1,4 @@
+
 import type { Config } from "tailwindcss";
 
 export default {
@@ -63,6 +64,50 @@ export default {
 					ring: 'hsl(var(--sidebar-ring))'
 				}
 			},
+			typography: (theme: any) => ({
+				DEFAULT: {
+					css: {
+						color: theme('colors.gray.900'),
+						a: {
+							color: theme('colors.primary.DEFAULT'),
+							'&:hover': {
+								color: theme('colors.primary.700'),
+							},
+						},
+						'h1,h2,h3,h4,h5,h6': {
+							color: theme('colors.gray.900'),
+							fontWeight: theme('fontWeight.bold'),
+						},
+						code: {
+							color: theme('colors.purple.600'),
+							backgroundColor: theme('colors.gray.100'),
+							paddingLeft: '4px',
+							paddingRight: '4px',
+							paddingTop: '2px',
+							paddingBottom: '2px',
+							borderRadius: '0.25rem',
+						},
+					},
+				},
+				dark: {
+					css: {
+						color: theme('colors.gray.300'),
+						a: {
+							color: theme('colors.blue.400'),
+							'&:hover': {
+								color: theme('colors.blue.300'),
+							},
+						},
+						'h1,h2,h3,h4,h5,h6': {
+							color: theme('colors.gray.100'),
+						},
+						code: {
+							backgroundColor: theme('colors.gray.800'),
+							color: theme('colors.purple.400'),
+						},
+					},
+				},
+			}),
 			borderRadius: {
 				lg: 'var(--radius)',
 				md: 'calc(var(--radius) - 2px)',

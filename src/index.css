@@ -158,3 +158,25 @@
 .difficulty-advanced {
   @apply bg-red-100 text-red-800 text-xs px-2 py-1 rounded-full;
 }
+
+/* Home page specific styles */
+.home-hero {
+  @apply flex flex-col md:flex-row items-center gap-8 py-16;
+}
+
+.home-btn {
+  @apply inline-block bg-white text-primary font-semibold py-3 px-6 rounded-lg text-lg transition-all hover:shadow-lg;
+}
+
+.home-btn-outlined {
+  @apply inline-block bg-transparent border-2 border-white text-white font-semibold py-3 px-6 rounded-lg text-lg transition-all hover:bg-white/10;
+}
+
+/* Dark mode specific styles */
+.dark .code-snippet {
+  @apply bg-slate-900 text-slate-100;
+}
+
+.dark .resource-card {
+  @apply bg-slate-800 border-slate-700;
+}

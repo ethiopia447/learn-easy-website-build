@@ -46,6 +46,7 @@ export const getQuestionsByCourse = (courseId: string): Question[] => {
 
 // Get questions for a specific topic
 export const getQuestionsByTopic = (topicId: string): Question[] => {
+  if (!topicId) return [];
   const questions = getQuestions();
   return questions.filter(q => q.topicId === topicId);
 };
@@ -70,6 +71,8 @@ export const saveMultipleQuestions = (questions: Question[]): void => {
 
 // Add sample test questions
 export const addSampleTestQuestions = (courseId?: string, topicId?: string): void => {
+  if (!topicId) return;
+  
   const timestamp = Date.now();
   
   const sampleQuestions: Question[] = [
@@ -149,6 +152,4 @@ export const addSampleTestQuestions = (courseId?: string, topicId?: string): voi
   ];
   
   saveMultipleQuestions(sampleQuestions);
-  
-  return;
 };

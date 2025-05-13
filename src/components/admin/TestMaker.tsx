@@ -2,7 +2,7 @@
 import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Save, ListOrdered, Text as TextIcon, Code } from "lucide-react";
+import { Save, ListOrdered } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
@@ -11,7 +11,6 @@ import QuestionsList from "./QuestionsList";
 import CodeEditor from "./CodeEditor";
 import { toast } from "@/components/ui/sonner";
 import { saveQuestion, getQuestions, saveMultipleQuestions, addSampleTestQuestions } from "../../utils/questionStorage";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export type QuestionType = "multipleChoice" | "shortAnswer" | "codeChallenge";
 
@@ -43,7 +42,7 @@ interface TestMakerProps {
 
 const TestMaker = ({ courseId, topicId, onQuestionsAdded, embedded = false }: TestMakerProps) => {
   const [activeTab, setActiveTab] = useState<QuestionType>("multipleChoice");
-  const [questions, setQuestions] = useState<Question[]>(getQuestions());
+  const [questions, setQuestions] = useState<Question[]>([]);
   const [questionText, setQuestionText] = useState<string>("");
   const [answer, setAnswer] = useState<string>("");
   const [options, setOptions] = useState<Option[]>([
@@ -55,16 +54,13 @@ const TestMaker = ({ courseId, topicId, onQuestionsAdded, embedded = false }: Te
   const [codeSnippet, setCodeSnippet] = useState<string>("// Write your code here");
   const [codeLanguage, setCodeLanguage] = useState<string>("javascript");
   const [explanation, setExplanation] = useState<string>("");
+  const [searchTerm, setSearchTerm] = useState("");
+  const [filterType, setFilterType] = useState<string>("all");
 
   // Update questions when the list changes
   useEffect(() => {
     setQuestions(getQuestions());
   }, []);
-
-  const handleQuestionTypeChange = (type: QuestionType) => {
-    setActiveTab(type);
-    resetForm();
-  };
 
   const resetForm = () => {
     setQuestionText("");
@@ -191,19 +187,30 @@ const TestMaker = ({ courseId, topicId, onQuestionsAdded, embedded = false }: Te
     toast.success("Sample questions added successfully!");
   };
 
+  // Filter questions
+  const filteredQuestions = questions
+    .filter(question => {
+      if (filterType === "all") return true;
+      return question.type === filterType;
+    })
+    .filter(question => {
+      if (!searchTerm) return true;
+      return (
+        question.text.toLowerCase().includes(searchTerm.toLowerCase()) ||
+        question.explanation?.toLowerCase().includes(searchTerm.toLowerCase())
+      );
+    });
+
   return (
     <div className="space-y-8">
       <div className="flex items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold">{embedded ? "Create Test Questions" : "Test Maker"}</h2>
-          <p className="text-gray-600">Create questions and exercises for your courses</p>
+          <p className="text-gray-600 dark:text-gray-400">Create questions and exercises for your courses</p>
         </div>
         <div className="flex gap-2">
           <Button variant="outline" onClick={handleAddSampleQuestions} className="gap-2">
             <ListOrdered size={16} /> Add Sample Questions
-          </Button>
-          <Button onClick={handleSaveQuestion} className="gap-2">
-            <Save size={16} /> Save Question
           </Button>
         </div>
       </div>
@@ -211,7 +218,7 @@ const TestMaker = ({ courseId, topicId, onQuestionsAdded, embedded = false }: Te
       <div className={`grid grid-cols-1 ${embedded ? "" : "lg:grid-cols-3"} gap-6`}>
         {/* Question Editor */}
         <div className={embedded ? "" : "lg:col-span-2"}>
-          <Card>
+          <Card className="dark:bg-slate-900 dark:border-slate-800">
             <CardHeader>
               <CardTitle>Question Editor</CardTitle>
             </CardHeader>
@@ -222,8 +229,8 @@ const TestMaker = ({ courseId, topicId, onQuestionsAdded, embedded = false }: Te
                   <div className="mt-2">
                     <select
                       value={activeTab}
-                      onChange={(e) => handleQuestionTypeChange(e.target.value as QuestionType)}
-                      className="w-full border rounded-md h-10 px-3 text-sm"
+                      onChange={(e) => setActiveTab(e.target.value as QuestionType)}
+                      className="w-full border rounded-md h-10 px-3 text-sm dark:bg-slate-800 dark:border-slate-700 dark:text-white"
                     >
                       <option value="multipleChoice">Multiple Choice</option>
                       <option value="shortAnswer">Short Answer</option>
@@ -238,7 +245,7 @@ const TestMaker = ({ courseId, topicId, onQuestionsAdded, embedded = false }: Te
                   <Textarea 
                     id="question-text"
                     placeholder="Enter your question here..."
-                    className="font-normal"
+                    className="font-normal dark:bg-slate-800 dark:border-slate-700"
                     value={questionText}
                     onChange={(e) => setQuestionText(e.target.value)}
                     rows={3}
@@ -255,14 +262,14 @@ const TestMaker = ({ courseId, topicId, onQuestionsAdded, embedded = false }: Te
                       className="space-y-3"
                     >
                       {options.map((option, index) => (
-                        <div key={option.id} className="flex items-center gap-3 p-2 border rounded-md hover:bg-gray-50">
+                        <div key={option.id} className="flex items-center gap-3 p-2 border rounded-md hover:bg-gray-50 dark:border-slate-700 dark:hover:bg-slate-800">
                           <RadioGroupItem value={option.id} id={option.id} />
                           <Input 
                             id={`option-${option.id}`}
                             value={option.text}
                             onChange={(e) => handleOptionTextChange(index, e.target.value)}
                             placeholder={`Choice ${index + 1}`}
-                            className="flex-grow"
+                            className="flex-grow dark:bg-slate-800 dark:border-slate-700"
                           />
                         </div>
                       ))}
@@ -270,13 +277,13 @@ const TestMaker = ({ courseId, topicId, onQuestionsAdded, embedded = false }: Te
                   </div>
                 )}
                 
-                {activeTab === "shortAnswer" && (
+                {(activeTab === "shortAnswer" || activeTab === "codeChallenge") && (
                   <div className="space-y-2">
                     <Label htmlFor="correct-answer" className="text-lg font-medium">Answer:</Label>
                     <Textarea 
                       id="correct-answer"
                       placeholder="Enter the correct answer..."
-                      className="font-normal"
+                      className="font-normal dark:bg-slate-800 dark:border-slate-700"
                       value={answer}
                       onChange={(e) => setAnswer(e.target.value)}
                       rows={3}
@@ -290,7 +297,7 @@ const TestMaker = ({ courseId, topicId, onQuestionsAdded, embedded = false }: Te
                       <Label htmlFor="code-language" className="font-medium">Language:</Label>
                       <select
                         id="code-language"
-                        className="w-full border rounded-md h-10 px-3 text-sm mt-1"
+                        className="w-full border rounded-md h-10 px-3 text-sm mt-1 dark:bg-slate-800 dark:border-slate-700 dark:text-white"
                         value={codeLanguage}
                         onChange={(e) => setCodeLanguage(e.target.value)}
                       >
@@ -306,25 +313,13 @@ const TestMaker = ({ courseId, topicId, onQuestionsAdded, embedded = false }: Te
                     
                     <div>
                       <Label htmlFor="code-snippet" className="font-medium">Code Snippet:</Label>
-                      <div className="mt-1 border rounded-md overflow-hidden">
+                      <div className="mt-1 border rounded-md overflow-hidden dark:border-slate-700">
                         <CodeEditor
                           value={codeSnippet}
                           language={codeLanguage}
                           onChange={setCodeSnippet}
                         />
                       </div>
-                    </div>
-                    
-                    <div className="space-y-2">
-                      <Label htmlFor="expected-solution" className="text-lg font-medium">Expected Solution/Output:</Label>
-                      <Textarea 
-                        id="expected-solution"
-                        placeholder="Enter the expected solution or output..."
-                        className="font-mono"
-                        value={answer}
-                        onChange={(e) => setAnswer(e.target.value)}
-                        rows={3}
-                      />
                     </div>
                   </>
                 )}
@@ -335,7 +330,7 @@ const TestMaker = ({ courseId, topicId, onQuestionsAdded, embedded = false }: Te
                     <Textarea 
                       id="explanation"
                       placeholder="Explain the answer..."
-                      className="font-normal"
+                      className="font-normal dark:bg-slate-800 dark:border-slate-700"
                       value={explanation}
                       onChange={(e) => setExplanation(e.target.value)}
                       rows={2}
@@ -356,7 +351,36 @@ const TestMaker = ({ courseId, topicId, onQuestionsAdded, embedded = false }: Te
         {/* Questions List - Only show when not in embedded mode */}
         {!embedded && (
           <div className="lg:col-span-1">
-            <QuestionsList questions={questions} onLoadQuestion={handleLoadQuestion} />
+            <Card className="dark:bg-slate-900 dark:border-slate-800">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-lg">Questions List</CardTitle>
+                <div className="mt-2 space-y-2">
+                  <Input
+                    placeholder="Search questions..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="dark:bg-slate-800 dark:border-slate-700"
+                  />
+                  <select
+                    className="w-full border rounded-md h-10 px-3 text-sm dark:bg-slate-800 dark:border-slate-700 dark:text-white"
+                    value={filterType}
+                    onChange={(e) => setFilterType(e.target.value)}
+                  >
+                    <option value="all">All Types</option>
+                    <option value="multipleChoice">Multiple Choice</option>
+                    <option value="shortAnswer">Short Answer</option>
+                    <option value="codeChallenge">Code Challenge</option>
+                  </select>
+                </div>
+              </CardHeader>
+              <CardContent className="max-h-[600px] overflow-y-auto">
+                <QuestionsList 
+                  questions={filteredQuestions} 
+                  onLoadQuestion={handleLoadQuestion} 
+                  useFilters={false}
+                />
+              </CardContent>
+            </Card>
           </div>
         )}
       </div>

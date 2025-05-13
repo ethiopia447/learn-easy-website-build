@@ -1,12 +1,14 @@
+
 import { useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { ChevronDown, ChevronUp, Plus, Trash, X, ListOrdered } from "lucide-react";
+import { ChevronDown, ChevronUp, Plus, Trash, X, ListOrdered, Search, Filter } from "lucide-react";
 import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion";
 import TestMaker, { Question } from "./TestMaker";
 import { addSampleTestQuestions, getQuestionsByTopic } from "../../utils/questionStorage";
 import { toast } from "@/components/ui/sonner";
+import CodeEditor from "./CodeEditor";
 
 interface ContentItemFormProps {
   content: any;
@@ -27,7 +29,7 @@ const ContentItemForm = ({
 }: ContentItemFormProps) => {
   const [codeExamples, setCodeExamples] = useState(content.codeExamples || []);
   const [resources, setResources] = useState(content.resources || []);
-  const [questions, setQuestions] = useState(content.questions || []);
+  const [questions, setQuestions] = useState(content.questions || getQuestionsByTopic(content.id) || []);
   const [showTestMaker, setShowTestMaker] = useState(false);
 
   const handleInputChange = (field: string, value: string) => {
@@ -113,16 +115,17 @@ const ContentItemForm = ({
   };
 
   const handleQuestionsAdded = (newQuestions: Question[]) => {
-    const updatedQuestions = [...questions, ...newQuestions];
-    setQuestions(updatedQuestions);
+    // Make sure we have the latest questions from the topic
+    const topicQuestions = getQuestionsByTopic(content.id);
+    
+    setQuestions(topicQuestions);
     
     onChange({
       ...content,
-      questions: updatedQuestions
+      questions: topicQuestions
     });
     
-    // Optionally hide test maker after adding questions
-    // setShowTestMaker(false);
+    toast.success(`${newQuestions.length} question(s) added successfully!`);
   };
 
   // Function to add sample test questions
@@ -143,15 +146,15 @@ const ContentItemForm = ({
   };
 
   return (
-    <div className="border rounded-md">
+    <div className="border rounded-md dark:border-slate-800">
       <div 
         className={`flex items-center justify-between p-4 cursor-pointer ${
-          isActive ? "bg-gray-50" : "bg-white"
+          isActive ? "bg-gray-50 dark:bg-slate-800" : "bg-white dark:bg-slate-900"
         }`}
         onClick={onToggle}
       >
         <div className="flex items-center">
-          <div className="w-8 h-8 rounded-full bg-primary/10 flex items-center justify-center mr-3">
+          <div className="w-8 h-8 rounded-full bg-primary/10 dark:bg-primary/20 flex items-center justify-center mr-3">
             {index + 1}
           </div>
           <h4 className="font-medium">{content.title || "Untitled Topic"}</h4>
@@ -174,7 +177,7 @@ const ContentItemForm = ({
       </div>
       
       {isActive && (
-        <div className="p-4 border-t">
+        <div className="p-4 border-t dark:border-slate-800">
           <div className="grid grid-cols-1 gap-4">
             <div>
               <label className="text-sm font-medium mb-1 block">Title</label>
@@ -182,6 +185,7 @@ const ContentItemForm = ({
                 value={content.title || ""}
                 onChange={(e) => handleInputChange("title", e.target.value)}
                 placeholder="Topic title"
+                className="dark:bg-slate-800 dark:border-slate-700"
               />
             </div>
             
@@ -191,8 +195,9 @@ const ContentItemForm = ({
                 value={content.youtubeId || ""}
                 onChange={(e) => handleInputChange("youtubeId", e.target.value)}
                 placeholder="e.g. dQw4w9WgXcQ"
+                className="dark:bg-slate-800 dark:border-slate-700"
               />
-              <span className="text-xs text-gray-500 mt-1 block">
+              <span className="text-xs text-gray-500 dark:text-gray-400 mt-1 block">
                 The ID part of a YouTube URL (e.g., youtube.com/watch?v=dQw4w9WgXcQ)
               </span>
             </div>
@@ -204,18 +209,19 @@ const ContentItemForm = ({
                 onChange={(e) => handleInputChange("description", e.target.value)}
                 placeholder="Description of this topic"
                 rows={3}
+                className="dark:bg-slate-800 dark:border-slate-700"
               />
             </div>
             
             <Accordion type="single" collapsible className="w-full">
-              <AccordionItem value="resources">
+              <AccordionItem value="resources" className="border-slate-200 dark:border-slate-700">
                 <AccordionTrigger className="py-2">
                   Resources ({resources.length})
                 </AccordionTrigger>
                 <AccordionContent>
                   <div className="space-y-4 pt-2">
                     {resources.map((resource: any, idx: number) => (
-                      <div key={idx} className="border rounded-md p-3 relative">
+                      <div key={idx} className="border rounded-md p-3 relative dark:border-slate-700">
                         <Button
                           type="button"
                           variant="ghost"
@@ -233,6 +239,7 @@ const ContentItemForm = ({
                               size={1}
                               value={resource.label}
                               onChange={(e) => updateResource(idx, "label", e.target.value)}
+                              className="dark:bg-slate-800 dark:border-slate-700"
                             />
                           </div>
                           
@@ -242,13 +249,14 @@ const ContentItemForm = ({
                               size={1}
                               value={resource.fileUrl}
                               onChange={(e) => updateResource(idx, "fileUrl", e.target.value)}
+                              className="dark:bg-slate-800 dark:border-slate-700"
                             />
                           </div>
                           
                           <div>
                             <label className="text-xs font-medium mb-1 block">File Type</label>
                             <select
-                              className="w-full border rounded-md h-10 px-3 text-sm"
+                              className="w-full border rounded-md h-10 px-3 text-sm dark:bg-slate-800 dark:border-slate-700 dark:text-white"
                               value={resource.fileType}
                               onChange={(e) => updateResource(idx, "fileType", e.target.value)}
                             >
@@ -275,14 +283,14 @@ const ContentItemForm = ({
                 </AccordionContent>
               </AccordionItem>
               
-              <AccordionItem value="codeExamples">
+              <AccordionItem value="codeExamples" className="border-slate-200 dark:border-slate-700">
                 <AccordionTrigger className="py-2">
                   Code Examples ({codeExamples.length})
                 </AccordionTrigger>
                 <AccordionContent>
                   <div className="space-y-4 pt-2">
                     {codeExamples.map((example: any, idx: number) => (
-                      <div key={idx} className="border rounded-md p-3 relative">
+                      <div key={idx} className="border rounded-md p-3 relative dark:border-slate-700">
                         <Button
                           type="button"
                           variant="ghost"
@@ -299,13 +307,14 @@ const ContentItemForm = ({
                             <Input
                               value={example.title}
                               onChange={(e) => updateCodeExample(idx, "title", e.target.value)}
+                              className="dark:bg-slate-800 dark:border-slate-700"
                             />
                           </div>
                           
                           <div>
                             <label className="text-xs font-medium mb-1 block">Language</label>
                             <select
-                              className="w-full border rounded-md h-10 px-3 text-sm"
+                              className="w-full border rounded-md h-10 px-3 text-sm dark:bg-slate-800 dark:border-slate-700 dark:text-white"
                               value={example.language}
                               onChange={(e) => updateCodeExample(idx, "language", e.target.value)}
                             >
@@ -319,11 +328,10 @@ const ContentItemForm = ({
                           
                           <div>
                             <label className="text-xs font-medium mb-1 block">Code</label>
-                            <Textarea
+                            <CodeEditor 
                               value={example.code}
-                              onChange={(e) => updateCodeExample(idx, "code", e.target.value)}
-                              rows={4}
-                              className="font-mono text-sm"
+                              language={example.language} 
+                              onChange={(code) => updateCodeExample(idx, "code", code)}
                             />
                           </div>
                           
@@ -333,6 +341,7 @@ const ContentItemForm = ({
                               value={example.explanation}
                               onChange={(e) => updateCodeExample(idx, "explanation", e.target.value)}
                               rows={4}
+                              className="dark:bg-slate-800 dark:border-slate-700"
                             />
                           </div>
                         </div>
@@ -352,18 +361,18 @@ const ContentItemForm = ({
                 </AccordionContent>
               </AccordionItem>
               
-              <AccordionItem value="questions">
+              <AccordionItem value="questions" className="border-slate-200 dark:border-slate-700">
                 <AccordionTrigger className="py-2">
                   Test Questions ({questions.length})
                 </AccordionTrigger>
                 <AccordionContent>
                   <div className="space-y-4 pt-2">
                     {questions.length > 0 && (
-                      <div className="border rounded-md p-3 mb-4">
+                      <div className="border rounded-md p-3 mb-4 dark:border-slate-700">
                         <p className="text-sm font-medium mb-2">Added Questions ({questions.length})</p>
                         <ul className="text-sm space-y-1">
                           {questions.map((q: Question, idx: number) => (
-                            <li key={idx} className="text-gray-700 flex items-center justify-between">
+                            <li key={idx} className="text-gray-700 dark:text-gray-300 flex items-center justify-between">
                               <span className="truncate">{q.text}</span>
                               <span className="text-xs text-gray-500 ml-2">{q.type}</span>
                             </li>
