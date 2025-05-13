@@ -5,14 +5,12 @@ import Footer from "../components/layout/Footer";
 import CourseCard from "../components/courses/CourseCard";
 import { ArrowRight, BookText, FileCheck, CalendarClock } from "lucide-react";
 import { getCourses } from "../utils/courseStorage";
-
 const Index = () => {
   const [courses, setCourses] = useState<any[]>([]);
-  
   useEffect(() => {
     // Get courses from localStorage
     const coursesData = getCourses();
-    
+
     // Transform the data for the CourseCard component
     const formattedCourses = Object.entries(coursesData).map(([id, course]: [string, any]) => ({
       title: course.title,
@@ -22,12 +20,9 @@ const Index = () => {
       level: id === "python" || id === "html-css" ? "beginner" : "intermediate",
       topicCount: course.content?.length || 0
     }));
-    
     setCourses(formattedCourses);
   }, []);
-
-  return (
-    <>
+  return <>
       <Navbar />
 
       <div className="hero-section">
@@ -42,17 +37,11 @@ const Index = () => {
                 Free, organized learning paths with the best videos, documentation, and practice exercises to help you master coding skills.
               </p>
               <div className="flex flex-wrap gap-4">
-                <Link
-                  to="/course/python"
-                  className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-primary-900 bg-white hover:bg-gray-50"
-                >
+                <Link to="/course/python" className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-primary-900 bg-black hover:bg-gray-50">
                   Start Learning
                   <ArrowRight size={16} className="ml-2" />
                 </Link>
-                <Link
-                  to="/resources"
-                  className="inline-flex items-center px-6 py-3 border border-white text-base font-medium rounded-md text-white hover:bg-white/10"
-                >
+                <Link to="/resources" className="inline-flex items-center px-6 py-3 border border-white text-base font-medium rounded-md text-white hover:bg-white/10">
                   Browse Resources
                 </Link>
               </div>
@@ -62,7 +51,7 @@ const Index = () => {
                 <div className="bg-white p-4 rounded-lg shadow-lg transform rotate-3 z-10 absolute top-4 left-4">
                   <pre className="text-xs text-gray-800">
                     <code>
-{`def hello_world():
+                    {`def hello_world():
     print("Hello, World!")
     
 hello_world()`}
@@ -72,7 +61,7 @@ hello_world()`}
                 <div className="bg-white p-4 rounded-lg shadow-lg transform -rotate-2 z-20 relative">
                   <pre className="text-xs text-gray-800">
                     <code>
-{`function calculateArea(width, height) {
+                    {`function calculateArea(width, height) {
   return width * height;
 }
 
@@ -84,7 +73,7 @@ console.log(area); // 50`}
                 <div className="bg-white p-4 rounded-lg shadow-lg transform rotate-1 z-30 absolute bottom-4 right-4">
                   <pre className="text-xs text-gray-800">
                     <code>
-{`<div class="container">
+                    {`<div class="container">
   <h1>Welcome to LearnEasy</h1>
   <p>Start your coding journey today!</p>
 </div>`}
@@ -107,17 +96,7 @@ console.log(area); // 50`}
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-            {courses.map((course: any) => (
-              <CourseCard
-                key={course.slug}
-                title={course.title}
-                description={course.description}
-                image={course.image}
-                slug={course.slug}
-                level={course.level as "beginner" | "intermediate" | "advanced"}
-                topicCount={course.topicCount}
-              />
-            ))}
+            {courses.map((course: any) => <CourseCard key={course.slug} title={course.title} description={course.description} image={course.image} slug={course.slug} level={course.level as "beginner" | "intermediate" | "advanced"} topicCount={course.topicCount} />)}
           </div>
         </section>
 
@@ -170,10 +149,7 @@ console.log(area); // 50`}
                 <p className="text-white/80 mb-6">
                   Access all our courses, resources, and learning materials for free.
                 </p>
-                <Link
-                  to="/course/python"
-                  className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-primary-900 bg-white hover:bg-gray-50"
-                >
+                <Link to="/course/python" className="inline-flex items-center px-6 py-3 border border-transparent text-base font-medium rounded-md shadow-sm text-primary-900 bg-white hover:bg-gray-50">
                   Get Started Now
                   <ArrowRight size={16} className="ml-2" />
                 </Link>
@@ -183,7 +159,7 @@ console.log(area); // 50`}
                   <div className="bg-white/90 p-2 rounded-lg transform rotate-3">
                     <pre className="text-xs text-gray-800">
                       <code>
-{`# Your coding journey starts here
+                      {`# Your coding journey starts here
 class Developer:
     def __init__(self):
         self.skills = []
@@ -206,8 +182,6 @@ me.learn("Python")`}
       </div>
       
       <Footer />
-    </>
-  );
+    </>;
 };
-
 export default Index;
