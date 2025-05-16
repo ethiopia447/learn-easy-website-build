@@ -1,16 +1,43 @@
 
 import { Link } from "react-router-dom";
-import { useState } from "react";
+import { useState, useEffect } from "react";
+import { Moon, Sun } from "lucide-react";
 import { ThemeToggle } from "./ThemeToggle";
+import { Button } from "../ui/button";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
+  const [isDarkMode, setIsDarkMode] = useState(() => {
+    if (typeof window !== 'undefined') {
+      return document.documentElement.classList.contains('dark');
+    }
+    return false;
+  });
+
+  useEffect(() => {
+    const isDark = document.documentElement.classList.contains('dark');
+    setIsDarkMode(isDark);
+  }, []);
+
   const toggleMenu = () => {
     setIsMenuOpen(!isMenuOpen);
   };
+
+  const toggleTheme = () => {
+    const newDarkMode = !isDarkMode;
+    setIsDarkMode(newDarkMode);
+    
+    if (newDarkMode) {
+      document.documentElement.classList.add('dark');
+      localStorage.setItem('theme', 'dark');
+    } else {
+      document.documentElement.classList.remove('dark');
+      localStorage.setItem('theme', 'light');
+    }
+  };
   
   return (
-    <header className="bg-primary text-white">
+    <header className="bg-primary text-white sticky top-0 z-50">
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
           <div className="flex">
@@ -26,7 +53,19 @@ const Navbar = () => {
           </div>
           
           <div className="flex items-center space-x-4">
-            <ThemeToggle />
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={toggleTheme} 
+              className="text-white hover:bg-primary-foreground/10"
+            >
+              {isDarkMode ? (
+                <Sun className="h-5 w-5" />
+              ) : (
+                <Moon className="h-5 w-5" />
+              )}
+              <span className="sr-only">Toggle theme</span>
+            </Button>
             
             <div className="md:hidden">
               <button type="button" className="inline-flex items-center justify-center p-2 rounded-md text-white hover:text-purple-200 hover:bg-primary-dark" aria-expanded="false" onClick={toggleMenu}>
@@ -60,9 +99,6 @@ const Navbar = () => {
           <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium hover:bg-primary-dark hover:text-white">
             Admin
           </Link>
-          <div className="px-3 py-2">
-            <ThemeToggle className="w-full" />
-          </div>
         </div>
       </div>
     </header>

@@ -58,7 +58,7 @@ const Footer = () => {
                   Resources
                 </Link>
               </li>
-              <li className="flex space-x-4">
+              <li className="flex space-x-6">
                 <a href="https://github.com" target="_blank" rel="noopener noreferrer" className="text-gray-500 hover:text-primary dark:text-gray-400 dark:hover:text-primary">
                   <Github size={20} />
                   <span className="sr-only">GitHub</span>

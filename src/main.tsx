@@ -1,11 +1,18 @@
 
-import { createRoot } from 'react-dom/client'
-import App from './App.tsx'
-import './index.css'
-import { ThemeProvider } from './contexts/ThemeContext'
+import React from "react";
+import ReactDOM from "react-dom/client";
+import App from "./App.tsx";
+import "./index.css";
+import { useDarkMode } from "./hooks/useDarkMode.tsx";
 
-createRoot(document.getElementById("root")!).render(
-  <ThemeProvider>
-    <App />
-  </ThemeProvider>
+// Apply dark mode before rendering
+const DarkModeWrapper = () => {
+  useDarkMode();
+  return <App />;
+};
+
+ReactDOM.createRoot(document.getElementById("root")!).render(
+  <React.StrictMode>
+    <DarkModeWrapper />
+  </React.StrictMode>
 );
