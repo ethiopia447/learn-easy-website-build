@@ -13,6 +13,7 @@ import AboutPage from "./pages/AboutPage";
 import AdminPage from "./pages/AdminPage";
 import LoginPage from "./pages/LoginPage";
 import NotFound from "./pages/NotFound";
+import IDEPage from "./pages/IDEPage";
 import { useTheme } from "./contexts/ThemeContext";
 
 const queryClient = new QueryClient();
@@ -34,6 +35,7 @@ const App = () => {
                 <Route path="/resources" element={<ResourcesPage />} />
                 <Route path="/about" element={<AboutPage />} />
                 <Route path="/login" element={<LoginPage />} />
+                <Route path="/ide" element={<IDEPage />} />
                 <Route path="/admin" element={
                   <ProtectedRoute>
                     <AdminPage />

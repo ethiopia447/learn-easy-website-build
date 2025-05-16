@@ -1,107 +1,166 @@
 
-import { Link } from "react-router-dom";
-import { useState, useEffect } from "react";
-import { Moon, Sun } from "lucide-react";
+import { Link, useLocation } from "react-router-dom";
+import { Button } from "@/components/ui/button";
+import { Code, Menu, X } from "lucide-react";
+import { useEffect, useState } from "react";
+import { useAuth } from "../../contexts/AuthContext";
 import { ThemeToggle } from "./ThemeToggle";
-import { Button } from "../ui/button";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const [isDarkMode, setIsDarkMode] = useState(() => {
-    if (typeof window !== 'undefined') {
-      return document.documentElement.classList.contains('dark');
-    }
-    return false;
-  });
+  const { user, logout } = useAuth();
+  const location = useLocation();
+  const [isScrolled, setIsScrolled] = useState(false);
 
   useEffect(() => {
-    const isDark = document.documentElement.classList.contains('dark');
-    setIsDarkMode(isDark);
+    const handleScroll = () => {
+      setIsScrolled(window.scrollY > 10);
+    };
+    window.addEventListener("scroll", handleScroll);
+    return () => window.removeEventListener("scroll", handleScroll);
   }, []);
 
-  const toggleMenu = () => {
-    setIsMenuOpen(!isMenuOpen);
+  const closeMenu = () => {
+    setIsMenuOpen(false);
   };
 
-  const toggleTheme = () => {
-    const newDarkMode = !isDarkMode;
-    setIsDarkMode(newDarkMode);
-    
-    if (newDarkMode) {
-      document.documentElement.classList.add('dark');
-      localStorage.setItem('theme', 'dark');
-    } else {
-      document.documentElement.classList.remove('dark');
-      localStorage.setItem('theme', 'light');
-    }
-  };
-  
+  const navLinks = [
+    { name: "Home", path: "/" },
+    { name: "Courses", path: "/course/python" },
+    { name: "Resources", path: "/resources" },
+    { name: "IDE", path: "/ide" },
+    { name: "About", path: "/about" }
+  ];
+
   return (
-    <header className="bg-primary text-white sticky top-0 z-50">
+    <nav
+      className={`w-full z-10 transition-all duration-200 ${
+        isScrolled
+          ? "bg-white/80 dark:bg-slate-900/80 backdrop-blur-md shadow-sm"
+          : "bg-white dark:bg-slate-900"
+      }`}
+    >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
-          <div className="flex">
-            <div className="flex-shrink-0 flex items-center">
-              <Link to="/" className="font-bold text-xl">Geeze</Link>
-            </div>
-            <nav className="hidden md:ml-6 md:flex md:space-x-8 items-center">
-              <Link to="/" className="px-3 py-2 text-sm font-medium hover:text-purple-200">Home</Link>
-              <Link to="/resources" className="px-3 py-2 text-sm font-medium hover:text-purple-200">Resources</Link>
-              <Link to="/about" className="px-3 py-2 text-sm font-medium hover:text-purple-200">About</Link>
-              <Link to="/admin" className="px-3 py-2 text-sm font-medium hover:text-purple-200">Admin</Link>
-            </nav>
-          </div>
-          
-          <div className="flex items-center space-x-4">
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={toggleTheme} 
-              className="text-white hover:bg-primary-foreground/10"
+          <div className="flex items-center">
+            <Link
+              to="/"
+              className="flex items-center font-bold text-xl text-gray-900 dark:text-white hover:opacity-90 transition-opacity"
             >
-              {isDarkMode ? (
-                <Sun className="h-5 w-5" />
-              ) : (
-                <Moon className="h-5 w-5" />
-              )}
-              <span className="sr-only">Toggle theme</span>
-            </Button>
-            
-            <div className="md:hidden">
-              <button type="button" className="inline-flex items-center justify-center p-2 rounded-md text-white hover:text-purple-200 hover:bg-primary-dark" aria-expanded="false" onClick={toggleMenu}>
-                <span className="sr-only">Open main menu</span>
-                {/* Menu Icon */}
-                <svg className={`${isMenuOpen ? 'hidden' : 'block'} h-6 w-6`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 6h16M4 12h16M4 18h16" />
-                </svg>
-                {/* X Icon */}
-                <svg className={`${isMenuOpen ? 'block' : 'hidden'} h-6 w-6`} xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor" aria-hidden="true">
-                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-              </button>
+              <Code size={28} className="mr-2 text-primary" />
+              <span>Geeze</span>
+            </Link>
+          </div>
+
+          {/* Desktop nav */}
+          <div className="hidden md:flex md:items-center md:space-x-6">
+            <div className="flex space-x-6 items-center">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.name}
+                  to={link.path}
+                  className={`text-sm font-medium transition-colors ${
+                    location.pathname === link.path
+                      ? "text-primary dark:text-primary"
+                      : "text-gray-700 dark:text-gray-300 hover:text-primary dark:hover:text-primary"
+                  }`}
+                  onClick={closeMenu}
+                >
+                  {link.name}
+                </Link>
+              ))}
+
+              <div className="flex items-center space-x-4">
+                <ThemeToggle />
+
+                {user ? (
+                  <div className="flex items-center space-x-2">
+                    <Link to="/admin">
+                      <Button variant="outline" size="sm">
+                        Dashboard
+                      </Button>
+                    </Link>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      onClick={() => logout()}
+                    >
+                      Logout
+                    </Button>
+                  </div>
+                ) : (
+                  <Link to="/login">
+                    <Button variant="outline" size="sm">
+                      Login
+                    </Button>
+                  </Link>
+                )}
+              </div>
             </div>
+          </div>
+
+          {/* Mobile nav toggle */}
+          <div className="flex items-center md:hidden gap-2">
+            <ThemeToggle />
+            <button
+              className="text-gray-700 dark:text-gray-300"
+              onClick={() => setIsMenuOpen(!isMenuOpen)}
+            >
+              {isMenuOpen ? <X /> : <Menu />}
+            </button>
           </div>
         </div>
       </div>
 
-      {/* Mobile menu, toggle classes based on menu state */}
-      <div className={`${isMenuOpen ? 'block' : 'hidden'} md:hidden`}>
-        <div className="px-2 pt-2 pb-3 space-y-1">
-          <Link to="/" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium hover:bg-primary-dark hover:text-white">
-            Home
-          </Link>
-          <Link to="/resources" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium hover:bg-primary-dark hover:text-white">
-            Resources
-          </Link>
-          <Link to="/about" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium hover:bg-primary-dark hover:text-white">
-            About
-          </Link>
-          <Link to="/admin" onClick={() => setIsMenuOpen(false)} className="block px-3 py-2 rounded-md text-base font-medium hover:bg-primary-dark hover:text-white">
-            Admin
-          </Link>
+      {/* Mobile nav */}
+      {isMenuOpen && (
+        <div className="md:hidden bg-white dark:bg-slate-900 shadow-lg">
+          <div className="pt-2 pb-4 px-4 space-y-1 sm:px-6">
+            {navLinks.map((link) => (
+              <Link
+                key={link.name}
+                to={link.path}
+                className={`block py-2 text-base font-medium ${
+                  location.pathname === link.path
+                    ? "text-primary dark:text-primary"
+                    : "text-gray-700 dark:text-gray-300"
+                }`}
+                onClick={closeMenu}
+              >
+                {link.name}
+              </Link>
+            ))}
+            {user ? (
+              <div className="flex flex-col space-y-2 pt-2 border-t dark:border-gray-700">
+                <Link to="/admin" onClick={closeMenu}>
+                  <Button variant="outline" className="w-full">
+                    Dashboard
+                  </Button>
+                </Link>
+                <Button
+                  variant="ghost"
+                  className="w-full"
+                  onClick={() => {
+                    logout();
+                    closeMenu();
+                  }}
+                >
+                  Logout
+                </Button>
+              </div>
+            ) : (
+              <div className="pt-2 border-t dark:border-gray-700">
+                <Link to="/login" onClick={closeMenu}>
+                  <Button variant="outline" className="w-full">
+                    Login
+                  </Button>
+                </Link>
+              </div>
+            )}
+          </div>
         </div>
-      </div>
-    </header>
+      )}
+    </nav>
   );
 };
 
