@@ -72,7 +72,7 @@ const CodeIDE = ({ initialCode, initialLanguage = "javascript" }: CodeIDEProps) 
     }
   }, [language, initialCode]);
 
-  const handleRunCode = () => {
+  const handleRunCode = async () => {
     setIsRunning(true);
     setOutput("");
     
@@ -109,12 +109,11 @@ const CodeIDE = ({ initialCode, initialLanguage = "javascript" }: CodeIDEProps) 
         // For HTML, we'll show a preview in an iframe
         setOutput("HTML preview is displayed below.");
       } else if (language === "python") {
-        setOutput("Python execution is simulated in this environment.\n\nTo run actual Python code, you would need a backend server with Python installed.");
-        // In a real implementation, you would send the code to a backend API
-        // that can execute Python code securely and return the results
+        // For a complete solution, you would need a backend service to execute Python code
+        // For now, we'll show a message suggesting that a Supabase Edge Function could be used
+        toast.info("To execute Python code, please connect to Supabase and create an Edge Function");
+        setOutput("To execute actual Python code, you need to connect this project to Supabase.\n\nWith Supabase Edge Functions, you could run Python code on the backend and return the results.");
       }
-      
-      toast.success("Code executed successfully!");
     } catch (error) {
       setOutput(`Error: ${error.message}`);
       toast.error("Error executing code");

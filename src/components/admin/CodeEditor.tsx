@@ -61,10 +61,10 @@ const applySyntaxHighlighting = (code: string, language: string): string => {
       '<span class="text-purple-600 dark:text-purple-400">$1</span>'
     );
     
-    // Strings
+    // Strings - using a more specific regex to avoid capturing unintended content
     highlightedCode = highlightedCode.replace(
-      /(["'])(.*?)\1/g, 
-      '<span class="text-green-600 dark:text-green-400">$1$2$1</span>'
+      /("(?:[^"\\]|\\.)*"|'(?:[^'\\]|\\.)*')/g, 
+      '<span class="text-green-600 dark:text-green-400">$1</span>'
     );
     
     // Comments
@@ -79,9 +79,9 @@ const applySyntaxHighlighting = (code: string, language: string): string => {
       '<span class="text-blue-600 dark:text-blue-400">$1</span>'
     );
     
-    // Function calls
+    // Function calls - using a more careful regex
     highlightedCode = highlightedCode.replace(
-      /(\w+)(\s*\()/g, 
+      /\b(\w+)(\s*\()/g, 
       '<span class="text-yellow-600 dark:text-yellow-400">$1</span>$2'
     );
     

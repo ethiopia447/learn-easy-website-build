@@ -8,7 +8,7 @@ import { ThemeToggle } from "./ThemeToggle";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { user, logout } = useAuth();
+  const { currentUser, signOut } = useAuth();
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -73,7 +73,7 @@ const Navbar = () => {
               <div className="flex items-center space-x-4">
                 <ThemeToggle />
 
-                {user ? (
+                {currentUser ? (
                   <div className="flex items-center space-x-2">
                     <Link to="/admin">
                       <Button variant="outline" size="sm">
@@ -83,7 +83,7 @@ const Navbar = () => {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => logout()}
+                      onClick={() => signOut()}
                     >
                       Logout
                     </Button>
@@ -130,7 +130,7 @@ const Navbar = () => {
                 {link.name}
               </Link>
             ))}
-            {user ? (
+            {currentUser ? (
               <div className="flex flex-col space-y-2 pt-2 border-t dark:border-gray-700">
                 <Link to="/admin" onClick={closeMenu}>
                   <Button variant="outline" className="w-full">
@@ -141,7 +141,7 @@ const Navbar = () => {
                   variant="ghost"
                   className="w-full"
                   onClick={() => {
-                    logout();
+                    signOut();
                     closeMenu();
                   }}
                 >

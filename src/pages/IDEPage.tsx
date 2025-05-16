@@ -3,6 +3,8 @@ import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import CodeIDE from "../components/ide/CodeIDE";
 import { ThemeToggle } from "../components/layout/ThemeToggle";
+import { InfoCircle } from "lucide-react";
+import { Alert, AlertDescription } from "@/components/ui/alert";
 
 const IDEPage = () => {
   return (
@@ -19,10 +21,12 @@ const IDEPage = () => {
           <ThemeToggle />
         </div>
         
-        <p className="mb-6">
-          Use this online IDE to experiment with code, test concepts, and practice programming.
-          Currently supporting JavaScript, HTML, and simulated Python execution.
-        </p>
+        <Alert className="mb-6 border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20">
+          <InfoCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+          <AlertDescription>
+            JavaScript runs directly in your browser. For Python execution, connect to Supabase to use Edge Functions for backend processing.
+          </AlertDescription>
+        </Alert>
         
         <div className="mt-8">
           <CodeIDE />
