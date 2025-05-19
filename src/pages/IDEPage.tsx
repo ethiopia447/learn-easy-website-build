@@ -3,10 +3,15 @@ import Navbar from "../components/layout/Navbar";
 import Footer from "../components/layout/Footer";
 import CodeIDE from "../components/ide/CodeIDE";
 import { ThemeToggle } from "../components/layout/ThemeToggle";
-import { InfoCircle } from "lucide-react";
+import { Info } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import AIHelper from "../components/ai/AIHelper";
+import { useState } from "react";
 
 const IDEPage = () => {
+  const [apiKey, setApiKey] = useState<string>("AIzaSyC2jrUWalRruVCkfOKFDRfjXmArVMuWfXg");
+  
   return (
     <>
       <Navbar />
@@ -22,14 +27,19 @@ const IDEPage = () => {
         </div>
         
         <Alert className="mb-6 border-amber-200 dark:border-amber-800 bg-amber-50 dark:bg-amber-900/20">
-          <InfoCircle className="h-4 w-4 text-amber-600 dark:text-amber-400" />
+          <Info className="h-4 w-4 text-amber-600 dark:text-amber-400" />
           <AlertDescription>
             JavaScript runs directly in your browser. For Python execution, connect to Supabase to use Edge Functions for backend processing.
           </AlertDescription>
         </Alert>
         
-        <div className="mt-8">
-          <CodeIDE />
+        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div className="lg:col-span-2">
+            <CodeIDE />
+          </div>
+          <div className="h-[600px]">
+            <AIHelper apiKey={apiKey} />
+          </div>
         </div>
       </div>
       <Footer />

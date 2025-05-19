@@ -8,7 +8,7 @@ import { ThemeToggle } from "./ThemeToggle";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { currentUser, signOut } = useAuth();
+  const { currentUser, logout } = useAuth(); // Using logout instead of signOut
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -83,7 +83,7 @@ const Navbar = () => {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => signOut()}
+                      onClick={() => logout()} // Using logout here instead of signOut
                     >
                       Logout
                     </Button>
@@ -141,7 +141,7 @@ const Navbar = () => {
                   variant="ghost"
                   className="w-full"
                   onClick={() => {
-                    signOut();
+                    logout(); // Using logout here instead of signOut
                     closeMenu();
                   }}
                 >
