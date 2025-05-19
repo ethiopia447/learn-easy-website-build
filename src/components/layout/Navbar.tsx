@@ -1,4 +1,3 @@
-
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Bot, Code, Menu, X } from "lucide-react";
@@ -8,7 +7,7 @@ import { ThemeToggle } from "./ThemeToggle";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { currentUser, signOut } = useAuth(); // Using signOut instead of logout
+  const { currentUser, logout } = useAuth(); // Using logout as that's what is available in the context
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -95,7 +94,7 @@ const Navbar = () => {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => signOut()} // Using signOut here instead of logout
+                      onClick={() => logout()} // Using logout method from context
                     >
                       Logout
                     </Button>
@@ -165,7 +164,7 @@ const Navbar = () => {
                   variant="ghost"
                   className="w-full"
                   onClick={() => {
-                    signOut(); // Using signOut here instead of logout
+                    logout(); // Using logout method from context
                     closeMenu();
                   }}
                 >

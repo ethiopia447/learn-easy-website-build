@@ -5,12 +5,11 @@ import CodeIDE from "../components/ide/CodeIDE";
 import { ThemeToggle } from "../components/layout/ThemeToggle";
 import { Info } from "lucide-react";
 import { Alert, AlertDescription } from "@/components/ui/alert";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AIHelper from "../components/ai/AIHelper";
-import { useState } from "react";
 
 const IDEPage = () => {
-  const [apiKey, setApiKey] = useState<string>("AIzaSyC2jrUWalRruVCkfOKFDRfjXmArVMuWfXg");
+  // Using the OpenAI API key provided
+  const openaiApiKey = "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";
   
   return (
     <>
@@ -38,7 +37,7 @@ const IDEPage = () => {
             <CodeIDE />
           </div>
           <div className="h-[600px]">
-            <AIHelper apiKey={apiKey} />
+            <AIHelper apiKey={openaiApiKey} />
           </div>
         </div>
       </div>

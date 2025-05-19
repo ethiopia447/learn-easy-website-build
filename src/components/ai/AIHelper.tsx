@@ -1,5 +1,6 @@
+
 import React, { useState, useRef, useEffect } from "react";
-import { Mic, MicOff, MessageCircle, MessageSquare, Headphones, HeadphoneOff } from "lucide-react";
+import { Mic, MicOff, MessageCircle, Headphones, HeadphoneOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -126,30 +127,27 @@ const AIHelper = ({ apiKey }: AIHelperProps) => {
     setIsLoading(true);
     
     try {
-      // Make request to Gemini API
-      const response = await fetch("https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent", {
+      // Make request to OpenAI API
+      const response = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
           "Authorization": `Bearer ${apiKey}`
         },
         body: JSON.stringify({
-          contents: [
+          model: "gpt-4o-mini", // Using GPT-4o mini as the model
+          messages: [
             ...messages.map(msg => ({
-              role: msg.role === "assistant" ? "MODEL" : "USER",
-              parts: [{ text: msg.content }]
+              role: msg.role,
+              content: msg.content
             })),
             {
-              role: "USER",
-              parts: [{ text: input }]
+              role: "user",
+              content: input
             }
           ],
-          generationConfig: {
-            temperature: 0.7,
-            topK: 40,
-            topP: 0.95,
-            maxOutputTokens: 1024
-          }
+          temperature: 0.7,
+          max_tokens: 1000
         })
       });
 
@@ -161,8 +159,8 @@ const AIHelper = ({ apiKey }: AIHelperProps) => {
       
       // Extract the response text
       let aiResponse = "";
-      if (data.candidates && data.candidates[0] && data.candidates[0].content) {
-        aiResponse = data.candidates[0].content.parts[0].text;
+      if (data.choices && data.choices[0] && data.choices[0].message) {
+        aiResponse = data.choices[0].message.content;
       } else {
         aiResponse = "Sorry, I couldn't generate a response at this time.";
       }
@@ -172,8 +170,8 @@ const AIHelper = ({ apiKey }: AIHelperProps) => {
       setMessages(prev => [...prev, assistantMessage]);
       
     } catch (error) {
-      console.error("Error calling Gemini API:", error);
-      toast.error("Failed to get a response from the AI. Please try again.");
+      console.error("Error calling OpenAI API:", error);
+      toast.error("Failed to get a response from the AI. Please check your API key or try again.");
       
       // Add error message
       setMessages(prev => [...prev, { 
