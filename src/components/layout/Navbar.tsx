@@ -1,14 +1,14 @@
 
 import { Link, useLocation } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Code, Menu, X } from "lucide-react";
+import { Bot, Code, Menu, X } from "lucide-react";
 import { useEffect, useState } from "react";
 import { useAuth } from "../../contexts/AuthContext";
 import { ThemeToggle } from "./ThemeToggle";
 
 const Navbar = () => {
   const [isMenuOpen, setIsMenuOpen] = useState(false);
-  const { currentUser, logout } = useAuth(); // Using logout instead of signOut
+  const { currentUser, signOut } = useAuth(); // Using signOut instead of logout
   const location = useLocation();
   const [isScrolled, setIsScrolled] = useState(false);
 
@@ -42,13 +42,25 @@ const Navbar = () => {
     >
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between h-16">
-          <div className="flex items-center">
+          <div className="flex items-center space-x-4">
             <Link
               to="/"
               className="flex items-center font-bold text-xl text-gray-900 dark:text-white hover:opacity-90 transition-opacity"
             >
               <Code size={28} className="mr-2 text-primary" />
               <span>Geeze</span>
+            </Link>
+
+            {/* AI Assistant Button */}
+            <Link to="/ide" className="hidden md:flex">
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="bg-purple-100 dark:bg-purple-900/30 border-purple-200 dark:border-purple-800 text-purple-700 dark:text-purple-400 hover:bg-purple-200 dark:hover:bg-purple-900/50"
+              >
+                <Bot size={16} className="mr-2" />
+                AI Assistant
+              </Button>
             </Link>
           </div>
 
@@ -83,7 +95,7 @@ const Navbar = () => {
                     <Button
                       variant="ghost"
                       size="sm"
-                      onClick={() => logout()} // Using logout here instead of signOut
+                      onClick={() => signOut()} // Using signOut here instead of logout
                     >
                       Logout
                     </Button>
@@ -116,6 +128,18 @@ const Navbar = () => {
       {isMenuOpen && (
         <div className="md:hidden bg-white dark:bg-slate-900 shadow-lg">
           <div className="pt-2 pb-4 px-4 space-y-1 sm:px-6">
+            {/* Mobile AI Assistant Button */}
+            <Link to="/ide" className="block py-2" onClick={closeMenu}>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="w-full bg-purple-100 dark:bg-purple-900/30 border-purple-200 dark:border-purple-800 text-purple-700 dark:text-purple-400"
+              >
+                <Bot size={16} className="mr-2" />
+                AI Assistant
+              </Button>
+            </Link>
+
             {navLinks.map((link) => (
               <Link
                 key={link.name}
@@ -141,7 +165,7 @@ const Navbar = () => {
                   variant="ghost"
                   className="w-full"
                   onClick={() => {
-                    logout(); // Using logout here instead of signOut
+                    signOut(); // Using signOut here instead of logout
                     closeMenu();
                   }}
                 >

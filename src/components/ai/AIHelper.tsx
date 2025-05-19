@@ -1,6 +1,5 @@
-
 import React, { useState, useRef, useEffect } from "react";
-import { Mic, MicOff, MessageCircle, MessageSquare, Headphones, HeadphonesOff } from "lucide-react";
+import { Mic, MicOff, MessageCircle, MessageSquare, Headphones, HeadphoneOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardHeader, CardTitle, CardContent, CardFooter } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
@@ -213,7 +212,7 @@ const AIHelper = ({ apiKey }: AIHelperProps) => {
               }}
               disabled={!messages.some(m => m.role === "assistant")}
             >
-              {isSpeaking ? <HeadphonesOff className="h-4 w-4 mr-1" /> : <Headphones className="h-4 w-4 mr-1" />}
+              {isSpeaking ? <HeadphoneOff className="h-4 w-4 mr-1" /> : <Headphones className="h-4 w-4 mr-1" />}
               {isSpeaking ? "Stop" : "Speak"} Response
             </Button>
           </div>
